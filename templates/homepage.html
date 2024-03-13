@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<script>
+$(document).ready(function() {
+  $("#generate").click(function() {
+    console.log($('#lang option:selected').text());
+    $.ajax({
+        url: '/gen_code',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ "description": $("#freetext").val(), "language": $('#lang option:selected').text() }),
+        // data: JSON.stringify($("#form_gen").serialize()),
+        dataType: 'json',
+        success : function(response){
+            document.getElementById("show_code").innerHTML = response.generated_code;
+            document.getElementById("feedback").innerHTML = '<div><p><label for="fb_text">Want to provide feedback to improve generated code?</label></p><textarea id="fb_text" rows="5" cols="100"></textarea><button type="button" id="Send_fb" class="ui button primary">Send</button></div>';
+            // $('#hist_table > tbody:last-child').append('<tr style="height:2px"><td style="text-overflow:ellipsis; overflow:hidden">'+ response.generated_code + '</td></tr>');
+            $('#hist_table > tbody:last-child').append('<tr><td>'+response.generated_code+'</td></tr>');
+         }
+      });
+    
+  });
+    
+});
+$(document).on("click", "#Send_fb", function () {
+  var original_code = $("#show_code").text();
+  $.ajax({
+        url: '/gen_w_feedback',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ "description": $("#freetext").val(), "language": $('#lang option:selected').text() , "feedback": $("#fb_text").val()}),
+        dataType: 'json',
+        success : function(response){
+            document.getElementById("show_code").innerHTML = response.improved_code;
+            document.getElementById("fb_text").value  = "";
+            $('#hist_table > tbody:last-child').append('<tr><td>'+ response.improved_code + '</td></tr>');
+
+         }
+      });
+});
+
+</script>
+
+<h2>Requirements</h2>
+
+
+<div >
+    <p><label for="freetext">Functionality</label></p>
+    <textarea id="freetext" name="description" rows="5" cols="100"></textarea>
+  </div>
+
+<select class="ui dropdown" id="lang">
+    <option value="1">Python</option>
+    <option value="0">C++</option>
+</select>
+<br><br>
+<button type="button" id="generate" class="ui button primary">Generate</button>
+
+<div class="ui raised segment" id="show_code"><p></p></div>
+<div id="feedback"></div>
+
+{% endblock %}
+
+{% block content2 %}
+
+<script>
+  var row = null;  
+  function ShowMenu(control, e) {
+    var posx = e.clientX +window.pageXOffset +'px'; //Left Position of Mouse Pointer
+    var posy = e.clientY + window.pageYOffset + 'px'; //Top Position of Mouse Pointer
+    document.getElementById(control).style.position = 'absolute';
+    document.getElementById(control).style.display = 'inline';
+    document.getElementById(control).style.left = posx;
+    document.getElementById(control).style.top = posy;           
+    }
+  function HideMenu(control) {
+    document.getElementById(control).style.display = 'none'; 
+  }
+    $(document).on("click", "#hist_table tr", function (e) {
+      row = this;
+      ShowMenu("options", e); 
+    });
+
+    $(document).on("click", "#view", function (e) {
+      HideMenu("options");
+      document.getElementById("view_code").innerHTML = $(row).text()
+      $('.ui.modal').modal('show');
+      
+    });
+
+    $(document).on("click", "#del", function (e) {
+      HideMenu("options");
+      $(row).remove().slideUp();
+    });
+
+</script>
+
+<style>
+/* tbody{
+  display:block;
+} */
+</style>
+
+<div class="ui vertical buttons" style="display:none; " id="options">
+    <button class="ui olive button" id="view">View</button>
+    <button class="ui red button" id="del">Delete</button>
+</div>
+
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">Generated Code</div>
+  <div class="scrolling content" id="view_code">
+  </div>
+</div>
+
+<table class="ui fixed single line celled table" id="hist_table">
+  <thead>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<!-- <div class="ui list" id="hist_list">
+</div> -->
+
+{% endblock %}
