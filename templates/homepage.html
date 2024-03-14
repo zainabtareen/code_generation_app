@@ -29,10 +29,12 @@ $(document).on("click", "#Send_fb", function () {
         url: '/gen_w_feedback',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ "description": $("#freetext").val(), "language": $('#lang option:selected').text() , "feedback": $("#fb_text").val()}),
+        // data: JSON.stringify({ "description": $("#freetext").val(), "language": $('#lang option:selected').text() , "feedback": $("#fb_text").val()}),
+        data: JSON.stringify({ "description": $("#freetext").val(), "language": $('#lang option:selected').text()}),
         dataType: 'json',
         success : function(response){
             document.getElementById("show_code").innerHTML = response.improved_code;
+            document.getElementById('freetext').value += "\n***Feedback***\n" + $("#fb_text").val();
             document.getElementById("fb_text").value  = "";
             $('#hist_table > tbody:last-child').append('<tr><td>'+ response.improved_code + '</td></tr>');
 
