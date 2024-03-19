@@ -25,9 +25,11 @@ source envs/env_app/bin/activate
 ```
 2. Cd to cloned repo folder and install requirement  
 ```pip install -r requirements.txt```
-3. Run the uvicorn server through terminal  
+3. Create .env file in root folder and save your openAPI key in it  
+```OPENAI_API_KEY=abc123```
+4. Run the uvicorn server through terminal  
 ```uvicorn main:app --host 0.0.0.0 --port 8000```
-4. Open the link [http://127.0.0.1:8000/] in your browser to access the UI
+5. Open the link [http://127.0.0.1:8000/] in your browser to access the UI
 
 ## Setting up through Docker
 1. Setup docker on your system
