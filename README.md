@@ -25,7 +25,7 @@ source envs/env_app/bin/activate
 ```
 2. Cd to cloned repo folder and install requirement  
 ```pip install -r requirements.txt```
-3. Create .env file in root folder and save your openAPI key in it  
+3. Create .env file in repo folder and save your openAPI key in it  
 ```OPENAI_API_KEY=abc123```
 4. Run the uvicorn server through terminal  
 ```uvicorn main:app --host 0.0.0.0 --port 8000```
